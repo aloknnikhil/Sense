@@ -2,8 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ConfigurationActivity">
-    <item android:id="@+id/action_realtime"
-        android:title="Realtime Monitor"
+    <item android:id="@+id/action_start"
+        android:title="Start"
         android:orderInCategory="100"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_stop"
+        android:title="Stop"
+        android:orderInCategory="200"
         app:showAsAction="never" />
 </menu>

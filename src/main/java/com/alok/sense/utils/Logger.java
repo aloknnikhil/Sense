@@ -31,6 +31,17 @@ public class Logger {
             logDir.mkdirs();
 
         timeCounter = 0;
+    }
+
+    public void initializeLoggingSession() {
+        long currentTime = System.currentTimeMillis();
+
+        sessionLogFile = new File(logDir, currentTime + "");
+        try {
+            sessionPrintWriter = new PrintWriter(new FileWriter(sessionLogFile));
+        } catch (IOException e) {
+            Log.d(TAG, "PrintWriter failed to open log file");
+        }
 
         timeThread = new Thread(new Runnable() {
             @Override
@@ -45,17 +56,6 @@ public class Logger {
                 }
             }
         });
-    }
-
-    public void initializeLoggingSession() {
-        long currentTime = System.currentTimeMillis();
-
-        sessionLogFile = new File(logDir, currentTime + "");
-        try {
-            sessionPrintWriter = new PrintWriter(new FileWriter(sessionLogFile));
-        } catch (IOException e) {
-            Log.d(TAG, "PrintWriter failed to open log file");
-        }
 
         timeThread.start();
     }
@@ -76,7 +76,7 @@ public class Logger {
     public void writeToLog(String logMessage)   {
         String enhancedMessage = "";
 
-        enhancedMessage += "[Time: " + timeCounter + "] ";
+        enhancedMessage += timeCounter + ",";
         enhancedMessage += logMessage;
         sessionPrintWriter.println(enhancedMessage);
         Log.d(TAG, enhancedMessage);

@@ -6,6 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 /**
  * Created by Alok on 3/26/2015.
@@ -19,9 +20,13 @@ public class SensorProvider {
     private final Activity activity;
     private float gravity[] = new float[3];
     private float linearAcceleration[] = new float[3];
-    private float[] orientation = new float[3];
+    private float[] orientation;
     private float[] magneticFieldStrength = new float[3];
     private ProcessedSensorEventListener eventListener;
+
+    private SensorEventListener accelerometerEventHandler;
+    private SensorEventListener rotationEventHandler;
+    private SensorEventListener magneticEventHandler;
 
     public SensorProvider(Activity activity, ProcessedSensorEventListener eventListener) {
         this.activity = activity;
@@ -30,47 +35,22 @@ public class SensorProvider {
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         magneticField = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         this.eventListener = eventListener;
+
+        accelerometerEventHandler = new AccelerometerEventHandler();
+        rotationEventHandler = new RotationEventHandler();
+        magneticEventHandler = new MagneticEventHandler();
     }
 
     public void startSensing() {
-        sensorManager.registerListener(new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                prepareAccelerometerData(event);
-                eventListener.getEventData(linearAcceleration, event.sensor.getType());
-            }
+        sensorManager.registerListener(accelerometerEventHandler, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(rotationEventHandler, rotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(magneticEventHandler, magneticField, SensorManager.SENSOR_DELAY_NORMAL);
+    }
 
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-            }
-        }, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-
-        sensorManager.registerListener(new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                prepareRotationVector(event);
-                eventListener.getEventData(orientation, event.sensor.getType());
-            }
-
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-            }
-        }, rotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
-
-        sensorManager.registerListener(new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                prepareMagneticField(event);
-                eventListener.getEventData(magneticFieldStrength, event.sensor.getType());
-            }
-
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-            }
-        }, magneticField, SensorManager.SENSOR_DELAY_NORMAL);
+    public void stopSensing()   {
+        sensorManager.unregisterListener(accelerometerEventHandler);
+        sensorManager.unregisterListener(rotationEventHandler);
+        sensorManager.unregisterListener(magneticEventHandler);
     }
 
     private void prepareAccelerometerData(SensorEvent event) {
@@ -86,24 +66,49 @@ public class SensorProvider {
     }
 
     private void prepareRotationVector(SensorEvent event) {
-        float[] rotationMatrix = new float[9];
-        SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
-
-        int worldAxisForDeviceAxisX = SensorManager.AXIS_X;
-        int worldAxisForDeviceAxisY = SensorManager.AXIS_Z;
-
-        float[] adjustedRotationMatrix = new float[9];
-        SensorManager.remapCoordinateSystem(rotationMatrix, worldAxisForDeviceAxisX,
-                worldAxisForDeviceAxisY, adjustedRotationMatrix);
-
-        SensorManager.getOrientation(adjustedRotationMatrix, orientation);
-
-        // Convert radians to degrees
-        orientation[1] = orientation[1] * -57;
-        orientation[2] = orientation[2] * -57;
+        orientation = event.values;
     }
 
     private void prepareMagneticField(SensorEvent event) {
         magneticFieldStrength = event.values;
+    }
+
+    private class AccelerometerEventHandler implements SensorEventListener  {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            prepareAccelerometerData(event);
+            eventListener.getEventData(linearAcceleration, event.sensor.getType());
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    }
+
+    private class RotationEventHandler implements SensorEventListener  {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            prepareRotationVector(event);
+            eventListener.getEventData(orientation, event.sensor.getType());
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    }
+
+    private class MagneticEventHandler implements SensorEventListener {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            prepareMagneticField(event);
+            eventListener.getEventData(magneticFieldStrength, event.sensor.getType());
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
     }
 }
