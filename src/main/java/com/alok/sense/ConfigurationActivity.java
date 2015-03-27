@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
 import com.alok.sense.utils.Logger;
@@ -22,6 +25,11 @@ import com.jjoe64.graphview.LineGraphView;
 public class ConfigurationActivity extends ActionBarActivity {
 
     private Toolbar toolbar;
+    private CheckBox accelerometer;
+    private CheckBox rotation;
+    private CheckBox magneticField;
+    private CheckBox wifi;
+    private CheckBox ble;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +37,52 @@ public class ConfigurationActivity extends ActionBarActivity {
         setContentView(R.layout.activity_configuration);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        accelerometer = (CheckBox) findViewById(R.id.set_accelerometer);
+        rotation = (CheckBox) findViewById(R.id.set_rotation);
+        magneticField = (CheckBox) findViewById(R.id.set_magnetic);
+        wifi = (CheckBox) findViewById(R.id.set_wifi);
+        ble = (CheckBox) findViewById(R.id.set_ble);
+
+        accelerometer.setChecked(true);
+        rotation.setChecked(true);
+        magneticField.setChecked(true);
+        wifi.setChecked(true);
+        ble.setChecked(true);
+
+        accelerometer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SensorProvider.setAccelerometer = isChecked;
+            }
+        });
+
+        rotation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SensorProvider.setRotation = isChecked;
+            }
+        });
+
+        magneticField.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SensorProvider.setMagneticField = isChecked;
+            }
+        });
+
+        wifi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SensorProvider.setWifi = isChecked;
+            }
+        });
+
+        ble.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SensorProvider.setBle = isChecked;
+            }
+        });
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);

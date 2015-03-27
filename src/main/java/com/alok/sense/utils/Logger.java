@@ -70,7 +70,9 @@ public class Logger {
             sessionLogFile = null;
         }
         timeCounter = 0;
-        timeThread.interrupt();
+
+        if(timeThread != null)
+            timeThread.interrupt();
     }
 
     public void writeToLog(String logMessage)   {
@@ -78,7 +80,9 @@ public class Logger {
 
         enhancedMessage += timeCounter + ",";
         enhancedMessage += logMessage;
-        sessionPrintWriter.println(enhancedMessage);
+
+        if(sessionPrintWriter != null)
+            sessionPrintWriter.println(enhancedMessage);
         Log.d(TAG, enhancedMessage);
     }
 }

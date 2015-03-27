@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/material_blue_grey_950"
     android:orientation="vertical">
 
     <!-- We use a Toolbar so that our drawer can be displayed
@@ -13,5 +13,45 @@
         android:layout_height="wrap_content"
         android:background="@color/primary"
         android:minHeight="?attr/actionBarSize" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accelerometer"
+        android:textStyle="bold"
+        android:id="@+id/set_accelerometer"
+        android:layout_below="@+id/toolbar" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rotation Vector"
+        android:id="@+id/set_rotation"
+        android:textStyle="bold"
+        android:layout_below="@+id/set_accelerometer" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Magnetic Field Strength"
+        android:id="@+id/set_magnetic"
+        android:textStyle="bold"
+        android:layout_below="@+id/set_rotation"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wifi"
+        android:id="@+id/set_wifi"
+        android:textStyle="bold"
+        android:layout_below="@+id/set_magnetic"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BLE"
+        android:id="@+id/set_ble"
+        android:textStyle="bold"
+        android:layout_below="@+id/set_wifi"/>
 
 </RelativeLayout>

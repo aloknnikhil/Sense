@@ -2,7 +2,9 @@ package com.alok.sense;
 
 import android.graphics.Color;
 import android.hardware.Sensor;
+import android.net.wifi.ScanResult;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -16,6 +18,8 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.GraphViewStyle;
 import com.jjoe64.graphview.LineGraphView;
+
+import java.util.List;
 
 
 public class RealTimeGraphingActivity extends ActionBarActivity implements ProcessedSensorEventListener {
@@ -63,6 +67,20 @@ public class RealTimeGraphingActivity extends ActionBarActivity implements Proce
 
         logger = new Logger(this);
         sensorProvider = new SensorProvider(this, this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        sensorProvider.stopSensing();
+        logger.terminateLoggingSession();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        sensorProvider.stopSensing();
+        logger.terminateLoggingSession();
+        super.onBackPressed();
     }
 
     @Override
@@ -140,6 +158,17 @@ public class RealTimeGraphingActivity extends ActionBarActivity implements Proce
                 layoutMagneticField.addView(graphViewMagneticField);
 
                 break;
+        }
+    }
+
+    @Override
+    public void getWifiEventData(List<ScanResult> scanResults, int sensorType) {
+
+        String logMessage = "";
+
+        for(ScanResult scanResult : scanResults)    {
+            logMessage = SensorProvider.WIFI + "," + scanResult.BSSID + "," + scanResult.level;
+            logger.writeToLog(logMessage);
         }
     }
 
@@ -247,5 +276,4 @@ public class RealTimeGraphingActivity extends ActionBarActivity implements Proce
         layoutMagneticField = (LinearLayout) findViewById(R.id.magnetic_field);
         layoutMagneticField.addView(graphViewMagneticField);
     }
-
 }
