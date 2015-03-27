@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="primary" type="color">#3F51B5</item>
+    <item name="primary_dark" type="color">#303F9F</item>
+    <item name="text_color" type="color">#FFFFFF</item>
+    <item name="accent1" type="color">#4CAF50</item>
+    <item name="accent2" type="color">#FF9800</item>
+    <item name="accent3" type="color">#FF4081</item>
+    <item name="accent4" type="color">#795548</item>
+    <item name="accent5" type="color">#009688</item>
+    <item name="accent6" type="color">#e51c23</item>
+    <item name="temp_card_color_expanded" type="color">#00BBA7</item>
+</resources>
