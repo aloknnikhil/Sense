@@ -10,7 +10,7 @@ import android.hardware.SensorManager;
 /**
  * Created by Alok on 3/26/2015.
  */
-public class SensorProvider implements SensorEventListener {
+public class SensorProvider {
 
     private final SensorManager sensorManager;
     private final Sensor accelerometer;
@@ -22,7 +22,6 @@ public class SensorProvider implements SensorEventListener {
     private float[] orientation = new float[3];
     private float[] magneticFieldStrength = new float[3];
     private ProcessedSensorEventListener eventListener;
-    private float oldTimeValue;
 
     public SensorProvider(Activity activity, ProcessedSensorEventListener eventListener) {
         this.activity = activity;
@@ -33,38 +32,45 @@ public class SensorProvider implements SensorEventListener {
         this.eventListener = eventListener;
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-
-        if (oldTimeValue < Logger.timeCounter) {
-            switch (event.sensor.getType()) {
-                case Sensor.TYPE_ACCELEROMETER:
-                    prepareAccelerometerData(event);
-                    eventListener.getEventData(linearAcceleration, event.sensor.getType());
-                    break;
-
-                case Sensor.TYPE_ROTATION_VECTOR:
-                    prepareRotationVector(event);
-                    eventListener.getEventData(orientation, event.sensor.getType());
-                    break;
-
-                case Sensor.TYPE_MAGNETIC_FIELD:
-                    prepareMagneticField(event);
-                    eventListener.getEventData(magneticFieldStrength, event.sensor.getType());
-            }
-        }
-        oldTimeValue = Logger.timeCounter;
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
     public void startSensing() {
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(this, magneticField, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                prepareAccelerometerData(event);
+                eventListener.getEventData(linearAcceleration, event.sensor.getType());
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+            }
+        }, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+        sensorManager.registerListener(new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                prepareRotationVector(event);
+                eventListener.getEventData(orientation, event.sensor.getType());
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+            }
+        }, rotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        sensorManager.registerListener(new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                prepareMagneticField(event);
+                eventListener.getEventData(magneticFieldStrength, event.sensor.getType());
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+            }
+        }, magneticField, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     private void prepareAccelerometerData(SensorEvent event) {

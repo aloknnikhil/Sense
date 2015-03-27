@@ -37,7 +37,7 @@ public class Logger {
             public void run() {
                 while (true) {
                     try {
-                        Thread.sleep(10);
+                        Thread.sleep(100);
                         timeCounter += 0.100f;
                     } catch (InterruptedException e) {
                         return;
